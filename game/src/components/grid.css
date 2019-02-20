@@ -1,36 +1,76 @@
 .game-container {
-    width: 80%;
-    display: flex;
-    margin: 0 auto;
-    justify-content: center;
+  width: 80%;
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.griddimensions {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.gen-counter{
+    margin: 10px auto;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .grid-container {
-    width: 50%;
-    margin: 0 auto;
+  width: 50%;
+  margin: 0 auto;
 }
 
-.extras-container {
-    width: 50%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+.control-buttons button {
+  margin: 10px;
+}
+
+.submit {
+  margin: 0 10px;
+}
+
+button {
+  border-radius: 5px;
 }
 
 .rules {
-    margin: 20px auto;
+  margin: 20px auto;
 }
 
-.rules-body{
-    text-align: left;
-    margin: 0 auto;
+.rules-body {
+  text-align: left;
+  margin: 0 auto;
 }
 
 .about {
-    margin: 20px auto;
+  margin: 20px auto;
 }
 
-.about-body{
-    text-align: left;
+.about-body {
+  text-align: left;
+  margin: 0 auto;
+}
+
+.infobuttons {
+  width: 50%;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 15px auto;
+  padding: 0 10px;
+}
+
+#canvas {
+    background-color: #CCD1D1;
+}
+
+.dimensions {
+    display: flex;
+    justify-content: center;
+    width: 50%;
     margin: 0 auto;
+}
+
+.dimensions input{
+    margin: 0 5px;
 }

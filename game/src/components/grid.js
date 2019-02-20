@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Rules from "./rules";
+import About from "./about";
 import "./grid.css";
 
 let gen_count = 0;
@@ -13,7 +15,9 @@ class Grid extends Component {
       grid: [],
       grid_empty: true,
       game_running: false,
-      speed: 300
+      speed: 300,
+      isShowingRules: false,
+      isShowingAbout: false
     };
   }
 
@@ -185,12 +189,9 @@ class Grid extends Component {
   grid_reset = () => {
     // this.setState({ game_running: false });
     this.stop_game();
-    const grid = this.state.grid;
-    for (let y = 0; y < this.state.grid_height_cells; y++) {
-      for (let x = 0; x < this.state.grid_width_cells; x++) {
-        grid[y][x] = false;
-      }
-    }
+    const grid = new Array(this.state.grid_height_cells)
+      .fill(0)
+      .map(x => new Array(this.state.grid_width_cells).fill(false));
     this.setState({ grid });
     this.grid_update_draw();
     gen_count = 0;
@@ -219,77 +220,116 @@ class Grid extends Component {
   };
 
   resize_grid(width, height) {
-    const grid = [];
-    for (let y = 0; y < height; y++) {
-      grid[y] = [];
-      for (let x = 0; x < width; x++) {
-        grid[y][x] = false;
-      }
-    }
-    this.setState({ grid });
+    const grid = new Array(this.state.grid_height_cells)
+      .fill(0)
+      .map(x => new Array(this.state.grid_width_cells).fill(false));
+    this.setState(function() {return{ grid }});
     this.grid_update_draw();
   }
 
   handleDimensionChange = event => {
-    this.setState({ [event.target.name]: Number(event.target.value) });
+    console.log(event);
+    event.persist();
+    this.stop_game();
+    this.grid_reset();
+    this.setState(function() {return { [event.target.name]: Number(event.target.value) }});
+    this.grid_init(this.state.grid_width_cells, this.state.grid_height_cells);
+  };
+
+  openModalHandlerRules = () => {
+    this.setState({
+      isShowingRules: true
+    });
+  };
+
+  closeModalHandlerRules = () => {
+    this.setState({
+      isShowingRules: false
+    });
+  };
+
+  openModalHandlerAbout = () => {
+    this.setState({
+      isShowingAbout: true
+    });
+  };
+
+  closeModalHandlerAbout = () => {
+    this.setState({
+      isShowingAbout: false
+    });
   };
 
   render() {
     return (
       <div className="game-container">
         <div className="grid-container">
-          <div className="gen-counter">
-            <h3>Generation: {gen_count}</h3>
-          </div>
-          <div className="control-buttons">
-            <button className="submit" onClick={this.random_board}>
-              Randomize
-            </button>
-            <button className="submit" onClick={this.next_step}>
-              Next
-            </button>
-            <button className="submit" onClick={this.start_game}>
-              Start
-            </button>
-            <button className="submit" onClick={this.stop_game}>
-              Stop
-            </button>
-            <button className="submit" onClick={this.grid_reset}>
-              Clear
-            </button>
-          </div>
-          <div className="canvas">
-            <canvas
-              id="canvas"
-              ref="canvas"
-              width={this.state.grid_width_cells * this.state.cell_size}
-              height={this.state.grid_height_cells * this.state.cell_size}
-              onClick={this.get_cursor}
-            />
-          </div>
           <div className="grid-change">
-            <h4>Change Grid Dimensions: </h4>
-            Width:
-            <input
-              type="number"
-              min="3"
-              max="40"
-              placeholder="Width"
-              onChange={this.handleDimensionChange}
-              name="grid_width_cells"
-              value={this.state.grid_width_cells}
-            />
-            Height:
-            <input
-              type="number"
-              min="3"
-              max="40"
-              placeholder="Height"
-              onChange={this.handleDimensionChange}
-              name="grid_height_cells"
-              value={this.state.grid_height_cells}
-            />
-            <button
+            <h2>Conway's Game of Life</h2>
+            <div>
+              <div className="infobuttons">
+                <button onClick={this.openModalHandlerRules}>Rules</button>
+                {this.state.isShowingRules === false ? null : (
+                  <Rules
+                    className="modal"
+                    show={this.state.isShowingRules}
+                    close={this.closeModalHandlerRules}
+                  />
+                )}
+                <button onClick={this.openModalHandlerAbout}>About</button>
+                {this.state.isShowingAbout === false ? null : (
+                  <About
+                    className="modal"
+                    show={this.state.isShowingAbout}
+                    close={this.closeModalHandlerAbout}
+                  />
+                )}
+              </div>
+            </div>
+
+            <p className="griddimensions">Change Grid Dimensions: </p>
+            <div className="dimensions">
+              Width:
+              <input
+                type="number"
+                min="3"
+                max="30"
+                placeholder="Width"
+                onChange={this.handleDimensionChange}
+                name="grid_width_cells"
+                value={this.state.grid_width_cells}
+              />
+              Height:
+              <input
+                type="number"
+                min="3"
+                max="30"
+                placeholder="Height"
+                onChange={this.handleDimensionChange}
+                name="grid_height_cells"
+                value={this.state.grid_height_cells}
+              />
+            </div>
+
+            <div className="control-buttons">
+              <button className="submit" onClick={this.random_board}>
+                Randomize
+              </button>
+              <button className="submit" onClick={this.next_step}>
+                Next
+              </button>
+              <button className="submit" onClick={this.start_game}>
+                Start
+              </button>
+              <button className="submit" onClick={this.stop_game}>
+                Stop
+              </button>
+              <button className="submit" onClick={this.grid_reset}>
+                Clear
+              </button>
+            </div>
+            <div className="gen-counter">Generation: {gen_count}</div>
+            {/* <button
               className="submit"
               onClick={() =>
                 this.grid_init(
@@ -299,55 +339,16 @@ class Grid extends Component {
               }
             >
               Set
-            </button>
+            </button> */}
           </div>
-        </div>
-        <div className="extras-container">
-          <div className="rules">
-            <h3>Game Rules</h3>
-            <div className="rules-body">
-              <p>
-                If the cell is alive **and** has 2 or 3 neighbors, then it
-                remains alive. Else it dies.
-              </p>
-              <p>
-                If the cell is dead **and** has exactly 3 neighbors, then it
-                comes to life. Else if remains dead.
-              </p>
-            </div>
-          </div>
-          <div className="about">
-            <h3>About Conway's Game of Life</h3>
-            <div className="about-body">
-              <p>
-                In this learning project we explore Conway's Game of Life. The
-                game involves an (infinite) two-dimensional grid with black
-                and white squares, which may be represented as 1 and 0. One
-                may think of them as "live cells" or "dead cells". The grid
-                evolves. The evolution rule is as follows:
-              </p>
-              <p>All cells evolve simultaneously</p>
-              <p>Each cell has eight neighbours</p>
-              <p>
-                An alive cell with two or three neighbours continues to live.
-                Otherwise it dies.
-              </p>
-              <p>
-                A dead cell with exactly three neighbours will become alive.
-              </p>
-              <p>
-                From these simple forms it is possible to create stable and
-                recursive patterns, such as the Gosper Glider Gun
-                (illustrated).
-              </p>
-              <p>
-                The Game of Life is a prototypical example of a cellular
-                automaton, an automatic machine of cells. It has attracted the
-                interest of researchers in diverse fields. Patterns in
-                Conway's Game of Life have been shown to be capable of
-                emulating a universal Turing machine.
-              </p>
-            </div>
+          <div className="canvas">
+            <canvas
+              id="canvas"
+              ref="canvas"
+              width={this.state.grid_width_cells * this.state.cell_size}
+              height={this.state.grid_height_cells * this.state.cell_size}
+              onClick={this.get_cursor}
+            />
           </div>
         </div>
       </div>
