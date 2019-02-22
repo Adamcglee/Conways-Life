@@ -28,7 +28,7 @@ class Grid extends Component {
     this.grid_init(this.state.grid_width_cells, this.state.grid_height_cells);
   }
 
-  draw_grid() {
+  draw_grid = () => {
     let size = this.state.cell_size;
     let height = this.state.grid_height_cells * size;
     let width = this.state.grid_width_cells * size;
@@ -51,7 +51,7 @@ class Grid extends Component {
     canvas.strokeStyle = "black";
     canvas.lineWidth = 0.5;
     canvas.stroke();
-  }
+  };
 
   tick = () => {
     if (this.state.game_running) {
@@ -99,6 +99,7 @@ class Grid extends Component {
           const neighbor = neighbors[i];
           let y1 = y + neighbor[0];
           let x1 = x + neighbor[1];
+          console.log(neighbor[1])
           if (
             x1 >= 0 &&
             x1 < this.state.grid_width_cells &&
@@ -223,16 +224,17 @@ class Grid extends Component {
     const grid = new Array(this.state.grid_height_cells)
       .fill(0)
       .map(x => new Array(this.state.grid_width_cells).fill(false));
-    this.setState(function() {return{ grid }});
+    this.setState(function() {
+      return { grid };
+    });
     this.grid_update_draw();
   }
 
   handleDimensionChange = event => {
-    console.log(event);
     event.persist();
-    this.stop_game();
-    this.grid_reset();
-    this.setState(function() {return { [event.target.name]: Number(event.target.value) }});
+    this.setState(function() {
+      return { [event.target.name]: Number(event.target.value) };
+    });
     this.grid_init(this.state.grid_width_cells, this.state.grid_height_cells);
   };
 
@@ -309,6 +311,17 @@ class Grid extends Component {
                 name="grid_height_cells"
                 value={this.state.grid_height_cells}
               />
+              <button
+                className="submit"
+                onClick={() =>
+                  this.grid_init(
+                    this.state.grid_width_cells,
+                    this.state.grid_height_cells
+                  )
+                }
+              >
+                Set
+              </button>
             </div>
 
             <div className="control-buttons">
